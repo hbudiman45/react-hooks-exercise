@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import useForm from "./customHooks/useForm";
 import useFetch from "./customHooks/useFetch";
+import Hello from "./Hello";
 
 const App = () => {
   const [values, handleChange] = useForm({ email: "", password: "" });
-  const [count, setCount] = useState(() =>
-    JSON.parse(localStorage.getItem("count"))
-  );
 
-  const { data, loading } = useFetch(`http://numbersapi.com/${count}`);
+  const [showHello, setShowHello] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem("count", JSON.stringify(count));
-    console.log(localStorage);
-  });
+  const inputRef = useRef();
+  const hello = useRef(() => console.log("hello"));
+
   return (
     <div style={{ padding: "40px", textAlign: "center" }}>
       <h3>React Hooks Exercise</h3>
+      {showHello && <Hello />}
       <br />
-      <div>
-        <p>{!data ? "loading..." : data}</p>
-        <button onClick={() => setCount(c => c + 1)}>+</button>
-        <p>{count}</p>
-      </div>
       <>
-        <input name="email" value={values.email} onChange={handleChange} />
+        <button onClick={() => setShowHello(!showHello)}>toggle</button>
+        <input
+          ref={inputRef}
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+        />
         <input
           type="password"
           name="password"
@@ -32,6 +31,14 @@ const App = () => {
           onChange={handleChange}
         />
       </>
+      <button
+        onClick={() => {
+          inputRef.current.focus();
+          hello.current();
+        }}
+      >
+        focus
+      </button>
     </div>
   );
 };
